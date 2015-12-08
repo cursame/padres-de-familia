@@ -14,3 +14,5 @@ end
 group :development do
   gem 'spring'
 end
+
+gem 'coveralls', require: false
