@@ -8,6 +8,7 @@ gem 'jbuilder', '~> 2.0'
 group :development, :test do
   gem 'byebug'
   gem 'rspec-rails', '~> 3.0'
+  gem 'faker'
 end
 
 group :development do
