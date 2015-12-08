@@ -4,6 +4,8 @@ ruby '2.2.3'
 gem 'rails', '4.2.5'
 gem 'pg'
 gem 'jbuilder', '~> 2.0'
+gem 'devise_token_auth'
+gem 'omniauth'
 
 group :development, :test do
   gem 'byebug'
