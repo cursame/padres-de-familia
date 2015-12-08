@@ -129,6 +129,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
+    rolify (4.1.1)
     rspec-core (3.3.2)
       rspec-support (~> 3.3.0)
     rspec-expectations (3.3.1)
@@ -185,6 +186,7 @@ DEPENDENCIES
   omniauth
   pg
   rails (= 4.2.5)
+  rolify
   rspec-rails (~> 3.0)
   spring
 
