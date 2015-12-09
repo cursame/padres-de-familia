@@ -1,33 +1,43 @@
 require 'rails_helper'
 
-RSpec.describe User, :type => :model do
-  describe 'User fields' do
+RSpec.describe User, type: :model do
+  shared_examples 'a valid user' do
     it { should validate_presence_of(:email) }
     it { should validate_presence_of(:name) }
+
+    it 'should be valid' do
+      expect(user).to be_valid
+    end
   end
 
-  scenario 'Valid with Factory values' do
-    user = build(:user)
-    expect(user.valid?).to be(true)
+  shared_examples 'an invalid user' do
+    it 'should be invalid' do
+      expect(user).to be_invalid
+    end
   end
 
-  scenario 'Invalid with NIL name field' do
-    user = build(:user, name: nil)
-    expect(user.invalid?).to be(true)
+  context 'with all mandatory fields' do
+    let(:user) { build(:user) }
+    it_behaves_like 'a valid user'
   end
 
-  scenario 'Invalid with blank name field' do
-    user = build(:user, name: '')
-    expect(user.invalid?).to be(true)
+  context 'with a nil name' do
+    let(:user) { build(:user, name: nil) }
+    it_behaves_like 'an invalid user'
   end
 
-  scenario 'Invalid with NIL email field' do
-    user = build(:user, email: nil)
-    expect(user.invalid?).to be(true)
+  context 'with a blank name' do
+    let(:user) { build(:user, name: '') }
+    it_behaves_like 'an invalid user'
   end
 
-  scenario 'Invalid with blank email field' do
-    user = build(:user, email: '')
-    expect(user.invalid?).to be(true)
+  context 'with a nil email' do
+    let(:user) { build(:user, email: nil) }
+    it_behaves_like 'an invalid user'
+  end
+
+  context 'with a nil email' do
+    let(:user) { build(:user, email: '') }
+    it_behaves_like 'an invalid user'
   end
 end
