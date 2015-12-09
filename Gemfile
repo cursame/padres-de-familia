@@ -6,6 +6,7 @@ gem 'pg'
 gem 'jbuilder', '~> 2.0'
 gem 'devise_token_auth'
 gem 'omniauth'
+gem 'rolify'
 
 group :development, :test do
   gem 'byebug'
