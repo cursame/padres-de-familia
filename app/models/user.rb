@@ -3,4 +3,5 @@ class User < ActiveRecord::Base
   rolify
 
   include DeviseTokenAuth::Concerns::User
+  validates_presence_of :name
 end
