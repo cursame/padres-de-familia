@@ -6,7 +6,7 @@ RSpec.describe 'Log out API', type: :request do
   context 'when user is authenticated' do
     before(:each) do
       user = create(:user)
-      post user_session_path, { email: user.email, password: user.password }, format: :json
+      sign_in_as_a_valid_user(user.email, user.password)
     end
 
     it 'user logout correct' do
@@ -15,7 +15,7 @@ RSpec.describe 'Log out API', type: :request do
         client: response.header["client"],
         uid: response.header["uid"]
       }
-      delete destroy_user_session_path, header, format: :json
+      delete destroy_v1_user_session_path, header, format: :json
       expect(response.body["success"]).not_to be_blank
 
     end
@@ -24,7 +24,7 @@ RSpec.describe 'Log out API', type: :request do
   context 'when send invalid access-token' do
     before(:each) do
       user = create(:user)
-      post user_session_path, { email: user.email, password: user.password }, format: :json
+      sign_in_as_a_valid_user(user.email, user.password)
     end
 
     it 'respond error message' do
@@ -33,7 +33,7 @@ RSpec.describe 'Log out API', type: :request do
         client: response.header["client"],
         uid: response.header["uid"]
       }
-      delete destroy_user_session_path, header, format: :json
+      delete destroy_v1_user_session_path, header, format: :json
       expect(response.body["errors"]).not_to be_blank
     end
   end
