@@ -4,4 +4,7 @@ class User < ActiveRecord::Base
 
   include DeviseTokenAuth::Concerns::User
   validates_presence_of :name
+
+  belongs_to :institution
+  validates :institution, presence: true
 end
