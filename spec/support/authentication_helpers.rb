@@ -1,8 +1,8 @@
-module Requests
+module Controller
   module AuthenticationHelpers
-    def sign_in_as_a_valid_user(email, password)
-      user_params = { email: email, password: password }
-      post v1_user_session_path, user_params, format: :json
+    def api_authenticate_header user
+      new_auth_header = user.create_new_auth_token
+      request.headers.merge!(new_auth_header)
     end
   end
 end

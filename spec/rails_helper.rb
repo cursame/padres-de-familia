@@ -28,7 +28,11 @@ ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
-  config.include Requests::AuthenticationHelpers, type: :request
+  config.include Devise::TestHelpers, type: :controller
+  config.include Request::SignInHelpers, type: :request
+  config.include Request::JsonHelpers, type: :controller
+  config.include Request::HeadersHelpers, type: :controller
+  config.include Controller::AuthenticationHelpers, type: :controller
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
@@ -51,6 +55,10 @@ RSpec.configure do |config|
   # The different available types are documented in the features, such as in
   # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
+
+  config.before(:each, type: :controller) do
+    api_response_format
+  end
 end
 
 Shoulda::Matchers.configure do |config|
