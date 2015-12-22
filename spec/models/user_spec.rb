@@ -47,4 +47,20 @@ RSpec.describe User, type: :model do
     let(:user) { build(:user, institution: nil) }
     it_behaves_like 'an invalid user'
   end
+
+  context 'with Admin factory Role' do
+    it { expect(create(:admin).has_role?(:admin)).to be true }
+  end
+
+  context 'with Teacher factory Role' do
+    it { expect(create(:teacher).has_role?(:teacher)).to be true }
+  end
+
+  context 'with Legal Guardian factory Role' do
+    it { expect(create(:legal_guardian).has_role?(:legal_guardian)).to be true }
+  end
+
+  context 'with Student factory Role' do
+    it { expect(create(:student).has_role?(:student)).to be true }
+  end
 end
