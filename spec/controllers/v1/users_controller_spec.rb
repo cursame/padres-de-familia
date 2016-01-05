@@ -3,6 +3,93 @@ require 'rails_helper'
 RSpec.describe V1::UsersController, type: :controller do
   before(:each) { api_authenticate_header create(:user) }
 
+  describe "GET #index" do
+    before(:each) do
+      @new_institution = create(:institution)
+      @admin = create(:admin, institution_id: @new_institution.id)
+      @teacher = create(:teacher, institution_id: @new_institution.id)
+      @legal_guardian = create(:legal_guardian, institution_id: @new_institution.id)
+      @student = create(:student, institution_id: @new_institution.id)
+    end
+
+    shared_examples 'has 200 status' do
+      it { should respond_with 200 }
+    end
+
+    context 'scope has role admin' do
+      before(:each) do
+        get :index, has_role: 'admin'
+      end
+
+      it 'renders the json representation for the users with admin role' do
+        users_response = json_response
+        @user = User.find(users_response.first[:id])
+        expect(users_response.count).to eql 1
+        expect(@user.has_role? :admin).to be true
+      end
+
+      it_behaves_like 'has 200 status'
+    end
+
+    context 'scope has role teacher' do
+      before(:each) do
+        get :index, has_role: 'teacher'
+      end
+
+      it 'renders the json representation for the users with teacher role' do
+        users_response = json_response
+        @user = User.find(users_response.first[:id])
+        expect(users_response.count).to eql 1
+        expect(@user.has_role? :teacher).to be true
+      end
+
+      it_behaves_like 'has 200 status'
+    end
+
+    context 'scope has role legal_guardian' do
+      before(:each) do
+        get :index, has_role: 'legal_guardian'
+      end
+
+      it 'renders the json representation for the users with legal_guardian role' do
+        users_response = json_response
+        @user = User.find(users_response.first[:id])
+        expect(users_response.count).to eql 1
+        expect(@user.has_role? :legal_guardian).to be true
+      end
+
+      it_behaves_like 'has 200 status'
+    end
+
+    context 'scope has role student' do
+      before(:each) do
+        get :index, has_role: 'student'
+      end
+
+      it 'renders the json representation for the users with student role' do
+        users_response = json_response
+        @user = User.find(users_response.first[:id])
+        expect(users_response.count).to eql 1
+        expect(@user.has_role? :student).to be true
+      end
+
+      it_behaves_like 'has 200 status'
+    end
+
+    context 'scope institution' do
+      before(:each) do
+        get :index, institution: @new_institution.id
+      end
+
+      it 'renders the json representation for the users in an institution' do
+        users_response = json_response
+        expect(users_response.count).to eql 4
+      end
+
+      it_behaves_like 'has 200 status'
+    end
+  end
+
   describe "GET #show" do
     before(:each) do
       @user = create(:user)
