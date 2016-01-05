@@ -2,6 +2,13 @@ class V1::UsersController < ApplicationController
   before_action :authenticate_v1_user!
   respond_to :json
 
+  has_scope :has_role, :institution
+
+  def index
+    users = apply_scopes(User).all
+    render json: users, status: 200
+  end
+
   def show
     user = User.find params[:id]
     render json: user, status: 200, location: [:v1, user]
