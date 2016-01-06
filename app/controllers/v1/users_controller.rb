@@ -4,6 +4,8 @@ class V1::UsersController < ApplicationController
 
   has_scope :has_role, :institution
 
+  rescue_from NameError, with: :invalid_role
+
   def index
     users = apply_scopes(User).all
     render json: users, status: 200
@@ -15,11 +17,13 @@ class V1::UsersController < ApplicationController
   end
 
   def create
-    user = User.new(user_params)
+    user_type = params[:role].camelize.constantize
+    user = user_type.new(user_params)
+    user.set_role
     password = Devise.friendly_token.first(8)
     user.password = password
     if user.save
-      render json: user, status: 201, location: [:v1, user]
+      render json: user, status: 201
     else
       render json: { errors: user.errors }, status: 422
     end
@@ -44,5 +48,13 @@ class V1::UsersController < ApplicationController
 
     def user_params
       params.require(:user).permit(:name, :email, :institution_id)
+    end
+
+    def invalid_role
+      if params[:role]
+        render json: { errors: 'invalid role' }, status: 422
+      else
+        render json: { errors: "role can't be blank" }, status: 422
+      end
     end
 end

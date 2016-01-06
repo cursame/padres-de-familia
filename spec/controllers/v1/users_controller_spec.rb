@@ -106,32 +106,112 @@ RSpec.describe V1::UsersController, type: :controller do
   end
 
   describe "POST #create" do
+    before(:each) do
+      @user_attributes = attributes_for :user
+      @user_attributes[:institution_id] = Institution.last.id
+    end
 
-    context "when is successfully created" do
-      before(:each) do
-        @user_attributes = attributes_for :user
-        @user_attributes[:institution_id] = Institution.last.id
-        post :create, user: @user_attributes
-      end
-
+    shared_examples 'a valid user' do
       it "renders the json representation for the user record just created" do
         user_response = json_response
         expect(user_response[:email]).to eql @user_attributes[:email]
+        expect(user_response[:name]).to eql @user_attributes[:name]
       end
 
       it { should respond_with 201 }
     end
 
-    context "when is not created" do
-      before(:each) do
-        @invalid_user_attributes = attributes_for :user
-        @invalid_user_attributes[:email] = nil
-        post :create, user: @invalid_user_attributes
-      end
-
+    shared_examples 'an invalid user' do
       it "renders an errors json" do
         user_response = json_response
         expect(user_response).to have_key(:errors)
+      end
+
+      it { should respond_with 422 }
+    end
+
+    context "when admin user is successfully created" do
+      before(:each) do
+        post :create, { user: @user_attributes,
+                        role: 'admin' }
+      end
+
+      it "user created has admin role" do
+        user_response = json_response
+        @user = User.find(user_response[:id])
+        expect(@user.has_role? :admin).to be true
+      end
+
+      it_behaves_like 'a valid user'
+    end
+
+    context "when teacher user is successfully created" do
+      before(:each) do
+        post :create, { user: @user_attributes,
+                        role: 'teacher' }
+      end
+
+      it "user created has teacher role" do
+        user_response = json_response
+        @user = User.find(user_response[:id])
+        expect(@user.has_role? :teacher).to be true
+      end
+
+      it_behaves_like 'a valid user'
+    end
+
+    context "when legal_guardian user is successfully created" do
+      before(:each) do
+        post :create, { user: @user_attributes,
+                        role: 'legal_guardian' }
+      end
+
+      it "user created has legal_guardian role" do
+        user_response = json_response
+        @user = User.find(user_response[:id])
+        expect(@user.has_role? :legal_guardian).to be true
+      end
+
+      it_behaves_like 'a valid user'
+    end
+
+    context "when student user is successfully created" do
+      before(:each) do
+        post :create, { user: @user_attributes,
+                        role: 'student' }
+      end
+
+      it "user created has student role" do
+        user_response = json_response
+        @user = User.find(user_response[:id])
+        expect(@user.has_role? :student).to be true
+      end
+
+      it_behaves_like 'a valid user'
+    end
+
+    context "when invalid email" do
+      before(:each) do
+        @invalid_user_attributes = attributes_for :user
+        @invalid_user_attributes[:email] = 'bademail.com'
+        post :create, { user: @invalid_user_attributes,
+                        role: 'teacher' }
+      end
+
+      it "renders the json errors on why the user could not be created" do
+        user_response = json_response
+        expect(user_response[:errors][:email]).to include "is not an email"
+      end
+
+      it_behaves_like 'an invalid user'
+    end
+
+    context "when email is nil" do
+      before(:each) do
+        @invalid_user_attributes = attributes_for :user
+        @invalid_user_attributes[:email] = nil
+        post :create, { user: @invalid_user_attributes,
+                        role: 'teacher' }
       end
 
       it "renders the json errors on why the user could not be created" do
@@ -139,7 +219,34 @@ RSpec.describe V1::UsersController, type: :controller do
         expect(user_response[:errors][:email]).to include "can't be blank"
       end
 
-      it { should respond_with 422 }
+      it_behaves_like 'an invalid user'
+    end
+
+    context 'When role is nil' do
+      before(:each) do
+        post :create, user: @user_attributes
+      end
+
+      it "renders the json errors on why the user could not be created" do
+        user_response = json_response
+        expect(user_response[:errors]).to include  "role can't be blank"
+      end
+
+      it_behaves_like 'an invalid user'
+    end
+
+    context "When fake role" do
+      before(:each) do
+        post :create, { user: @user_attributes,
+                        role: 'fake_role' }
+      end
+
+      it "renders the json errors on why the user could not be created" do
+        user_response = json_response
+        expect(user_response[:errors]).to include 'invalid role'
+      end
+
+      it_behaves_like 'an invalid user'
     end
   end
 
