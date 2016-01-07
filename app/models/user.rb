@@ -11,4 +11,20 @@ class User < ActiveRecord::Base
 
   belongs_to :institution
   validates :institution, presence: true
+
+  def add_role_admin
+    self.add_role :admin
+  end
+
+  def add_role_teacher
+    self.add_role :teacher
+  end
+
+  def add_role_legal_guardian
+    self.add_role :legal_guardian
+  end
+
+  def add_role_student
+    self.add_role :student
+  end
 end

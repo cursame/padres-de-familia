@@ -17,9 +17,9 @@ class V1::UsersController < ApplicationController
   end
 
   def create
-    user_type = params[:role].camelize.constantize
-    user = user_type.new(user_params)
-    user.set_role
+    add_role_param = 'add_role_' "#{params[:role]}"
+    user = User.new(user_params)
+    user.send(add_role_param)
     password = Devise.friendly_token.first(8)
     user.password = password
     if user.save
